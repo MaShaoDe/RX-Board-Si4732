@@ -1,6 +1,6 @@
 # hardware
 
-Rev A des RX-Boards (UKW, MW, LW). Stand 2026-11-15: **Entwurf, in KiCad noch nicht geöffnet und nicht geprüft.**
+Rev A des RX-Boards (UKW, MW, LW). Stand 2026-11-15: **Entwurf.** In KiCad 9 geladen: ERC 0 Meldungen, DRC 0 Fehler und 0 nicht verbundene Pads. Übrig sind nur Warnungen `lib_footprint_mismatch` (eigene Pad-Geometrie statt Bibliothek). Noch nicht geprüft: Footprints gegen die Standardbibliothek, Antennenpfade im Labortest, JLCPCB-Vorschau.
 
 ## Inhalt
 
