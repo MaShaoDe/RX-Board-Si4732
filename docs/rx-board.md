@@ -34,11 +34,11 @@ Die Belegung der Stiftleiste wird nach dem Pinplan der Hauptplatine festgelegt (
 | SDA, SCL | Ein/Aus | I2C zur Steuerung (Pinplan: GPIO 8 und 9) |
 | RST | Eingang | Reset (Pinplan: GPIO 7) |
 | Audio L, Audio R | Ausgang | Analoges Tonsignal, weiter an Verstärker und Klinke |
-| Antenne FM/SW | Eingang | Teleskopantenne oder BNC |
+| Antenne FM (und KW) | Eingang | Teleskopantenne oder BNC |
 | Antenne AM/LW | Eingang | Ferritstab |
 | Interrupt (optional) | Ausgang | Nur wenn die Firmware ihn braucht |
 
-Welche Antenne an welchen Eingang gehört: Laut Blockschaltbild des Datenblatts gibt es einen Eingang "AM / LW ANT" und einen Eingang "FM / SW ANT". Das Teleskop kommt an FM/SW, der Ferritstab an AM/LW.
+Welche Antenne an welchen Eingang gehört (AN383, geprüft): FM kommt vom Teleskop an FMI. Kurzwelle (SW) kommt bei diesem Chip über AMI, nicht über FMI. Der Ferritstab sitzt an AMI für MW und LW. Details in Abschnitt 4c.
 
 ## 4. Anforderungen
 
@@ -90,9 +90,9 @@ Quellen: Datenblatt-Kurzfassung Silicon Labs (2013) und Skyworks (2021), beide g
 | 3 | GPO2/INTB | General Purpose Out 2 / Interrupt | offen lassen oder optional zur Stiftleiste (muss beim Reset low sein) |
 | 4 | GPO1 | General Purpose Out 1 | unbeschaltet (interner Pull-up, muss beim Reset high sein) |
 | 5 | NC | nicht belegt | unbeschaltet |
-| 6 | FMI | FM/SW Antenneneingang | Teleskop, ESD-Schutz |
+| 6 | FMI | FM Antenneneingang | Teleskop, ESD-Schutz |
 | 7 | RFGND | HF-Masse | an GND |
-| 8 | AMI | AM/LW Antenneneingang | Ferritstab, ESD-Schutz |
+| 8 | AMI | AM, LW und SW Antenneneingang | Ferritstab (und Teleskop für KW), ESD-Schutz |
 | 9 | RST | Reset, aktiv low | Pull-up 4.7 kΩ, von ESP32 |
 | 10 | SENB | Adresswahl I2C | fest verdrahtet (siehe unten) |
 | 11 | SCLK | I2C Takt | Pull-up 4.7 kΩ |
@@ -120,6 +120,30 @@ Das Layout wird nach Schaltplan und Datenblatt gezeichnet. Die Werte unten sind 
 * Start (AN332): Quarzbetrieb braucht beim Befehl POWER_UP XOSCEN = 1 und OPMODE = 0x05 (analoger Ausgang). Danach mindestens 500 ms warten, bis der erste Abstimmbefehl kommt. Zum Chip-Test gibt POWER_UP mit FUNC = 15 die Teilenummer zurück.
 * Die genaue Verschaltung (welcher Wert in welcher Leitung) wird aus dem Schaltplan gezeichnet, nicht aus dieser Liste. Die Ferritantenne (Induktivität) ist noch festzulegen.
 
+## 4c. Antennen (Quelle: AN383, Skyworks 2025)
+
+**FM, Teleskop an FMI**
+* Kopplung 1 nF (C0G) in Reihe zu FMI, Anpassspule 56 nH (Güte mindestens 15 bei 100 MHz, kleiner Gleichstromwiderstand), ESD-Diode mit höchstens 1 pF (Beispiel CM1213-01ST).
+* Der Mikroe-Click nutzt 270 nH an seiner SMA-Buchse. Wir starten mit den Werten aus AN383 (56 nH) und prüfen im Labortest.
+* Chip möglichst nah an der Antennenbuchse, Spule und Buchse zusammen und weit weg von Störquellen und I/O-Leitungen, ESD-Diode direkt an der Buchse.
+
+**MW und LW, Ferritstab an AMI**
+* Ferritstab mit 180 bis 450 µH, Kopplung 0.47 µF (X7R) in Reihe zu AMI. ESD-Diode nur nötig, wenn ein freies Pad nach aussen führt.
+* Empfohlene Stäbe laut AN383: SL8X50MW70T (8 x 50 mm, Tischradio), SL4X30MW100T (4 x 30 mm, Portable). Hersteller Jiaxin (firstantenna.com).
+* Gesamtkapazität am AMI klein halten: etwa 29 pF bei 300 µH (der Chip selbst hat 8 pF). Kurze Leitungen, kleine Pads.
+* Unter dem Ferritstab keine Massefläche und keine Leitung, Abstand etwa 6 mm (1/4 Zoll) oder die Breite des Stabs. Weit weg von Taktleitungen, ESP32 und Display. Aussen am Gerät oder an einem Kabel sitzt der Stab weniger im Störfeld.
+
+**KW (SW), Teleskop an AMI**
+* Die Kurzwelle läuft beim Si4732 über AMI. Dafür braucht es eine Tiefpass-Spule 4.7 µH (Güte mindestens 20 bei 25 MHz), 33 pF als Sperrkreis für AM, und der Ferritstab dient als Spule gegen Masse. Alternativ eine feste Spule 220 µH, wenn kein AM gebraucht wird.
+* Umschalter (SPDT) zwischen KW-Teleskop und AM-Ferritstab, oder zwei getrennte Buchsen. Das ist noch zu entscheiden (Offene Punkte).
+* Zwei ESD-Dioden (je höchstens 1 pF) an den Antennenbuchsen, weil die Teleskopantenne aussen liegt.
+
+**Layout allgemein**
+* Der Abblockkondensator sitzt direkt am VDD-Pin (AN383 nennt 22 nF, wir bleiben bei 100 nF und 1 µF), mit kurzer, breiter Masseleitung zum GND-Pin.
+* RFGND lokal von GND trennen und an der Masseebene anbinden (Datenblatt Si473x).
+* Quarz so nah wie möglich an den Pins 2 und 13. Die RCLK-Leitung weit weg von SDIO führen.
+* Kein Schaltregler, keine Taktleitungen im Bereich 520 bis 1720 kHz in der Nähe der AM-Antenne.
+
 ## 5. Bestückung
 
 * Chip: Si4732-A10-GS im 16-poligen SOIC-Gehäuse.
@@ -139,7 +163,7 @@ Das Layout wird nach Schaltplan und Datenblatt gezeichnet. Die Werte unten sind 
 
 1. Vollständiges Datenblatt des Si4732-A10: Es gibt öffentlich nur das 3-seitige Data Short. AN332 (Programming Guide) liegt vor und liefert Adresse, Bus-Modus und Start. Es fehlen weiter Applikationsschaltung mit Werten, Maximalwerte und Layout-Hinweise. Pinbelegung ist geprüft (Abschnitt 4a), die Werte in 4b sind Startwerte aus dem Mikroe-Schaltplan.
 2. Erledigt: Mikroe-Schaltplan gegengelesen (Abschnitt 4a und 4b).
-3. Antennenanschluss des Ferritstabs: Anzapfung und Induktivität nach Datenblatt.
+3. Erledigt: Ferritstab (180 bis 450 µH, 0.47 µF) nach AN383, siehe 4c. Offen: Kurzwelle auf AMI, Umschalter oder zwei Buchsen? Teleskop für FM und KW gemeinsam oder getrennt?
 4. Schutz der Antenneneingänge gegen statische Aufladung (SMD, auf dem Board).
 5. Verfügbarkeit von Chip, Quarz und Kondensatoren beim Hersteller, Angebot einholen.
 6. Lizenzdatei der PU2CLR-Bibliothek einsehen, Autor in der Doku nennen.
