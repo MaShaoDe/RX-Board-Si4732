@@ -7,7 +7,7 @@ Stand 2026-11-15. Für jedes Teil die Anforderung, den Suchbegriff im JLCPCB-Tei
 | C1 | 100 nF | 0805 | X7R, mindestens 16 V | `100nF 0805 X7R` | C49678 (Yageo, 50 V, bestätigt) |
 | C4 | 1 µF | 0805 | X7R, mindestens 10 V | `1uF 0805 X7R` | C49326705 (16 V) |
 | C2, C3 | 22 pF | 0805 | C0G/NP0, 5 % oder besser, mindestens 50 V | `22pF 0805 C0G` | C1804 (50 V) |
-| C7 | 1 nF | 0805 | C0G/NP0, 10 % oder besser (Antennenpfad) | `1nF 0805 C0G` | |
+| C7 | 1 nF | 0805 | C0G/NP0, 10 % oder besser (Antennenpfad) | `1nF 0805 C0G` | C62774 (1 nF, 50 V, NP0, ±5 %) |
 | C5, C6, C8 | 470 nF | 0805 | X7R, mindestens 16 V | `470nF 0805 X7R` | C106846 (25 V) |
 | R1, R2, R3 | 4.7 kΩ | 0805 | 1 % | `4.7k 0805 1%` | C17673 |
 | R4, R5, R6 | 20 kΩ | 0805 | 1 % | `20k 0805 1%` | C2912590 |
