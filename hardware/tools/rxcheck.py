@@ -49,6 +49,11 @@ def check(r):
             minc = min(minc, d) if not "hole" in (a.kind, b.kind) else minc
             if d < need - 1e-6:
                 errs.append(f"Abstand {d:.3f} < {need}: {a.ref}.{a.pad}/{a.kind}:{a.net} - {b.ref}.{b.pad}/{b.kind}:{b.net}")
+    vias = [it for it in items if getattr(it, "via", False)]
+    for i in range(len(vias)):
+        for j in range(i + 1, len(vias)):
+            d = math.hypot(vias[i].x - vias[j].x, vias[i].y - vias[j].y) - VIA_DRILL
+            if d < 0.5 - 1e-6: errs.append(f"Bohrung zu Bohrung {d:.2f} mm: Vias bei ({vias[i].x:.1f},{vias[i].y:.1f}) und ({vias[j].x:.1f},{vias[j].y:.1f})")
     # Kante
     for it in items:
         if it.kind == "hole": continue
@@ -62,11 +67,26 @@ def check(r):
     def f(x):
         while parent[x] != x: parent[x] = parent[parent[x]]; x = parent[x]
         return x
+    def inside(px, py, it):
+        if it.kind == "rect": return it.x0 - 1e-6 <= px <= it.x1 + 1e-6 and it.y0 - 1e-6 <= py <= it.y1 + 1e-6
+        return math.hypot(px - it.x, py - it.y) <= it.r + 1e-6
+    def pt_seg(px, py, s):
+        vx, vy = s.x2 - s.x1, s.y2 - s.y1; Lq = vx * vx + vy * vy
+        t = 0 if Lq == 0 else max(0, min(1, ((px - s.x1) * vx + (py - s.y1) * vy) / Lq))
+        return math.hypot(px - s.x1 - t * vx, py - s.y1 - t * vy)
     for i in range(n):
         for j in range(i + 1, n):
             a, b = items[i], items[j]
             if a.net is None or a.net != b.net or not set(a.layers) & set(b.layers): continue
-            if dist(a, b) <= 0.001: parent[f(i)] = f(j)
+            ok = False
+            # KiCad verbindet, wenn der Endpunkt einer Bahn im Pad / Via liegt oder auf einer anderen Bahn
+            for p, q in ((a, b), (b, a)):
+                if p.kind == "seg":
+                    ends = ((p.x1, p.y1), (p.x2, p.y2))
+                    if q.kind in ("rect", "disk"): ok = ok or any(inside(ex, ey, q) for ex, ey in ends)
+                    elif q.kind == "seg": ok = ok or any(pt_seg(ex, ey, q) <= q.w / 2 + 1e-6 for ex, ey in ends)
+            if a.kind != "seg" and b.kind != "seg" and dist(a, b) <= 0.001: ok = True
+            if ok: parent[f(i)] = f(j)
     for net in NETS:
         its = [i for i, it in enumerate(items) if it.net == net]
         pads = [i for i in its if items[i].kind != "seg" and not getattr(items[i], "via", False)]
