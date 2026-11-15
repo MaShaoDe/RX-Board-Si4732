@@ -22,7 +22,7 @@ class Item:
 def pad_items():
     items = []
     for ref, kind, val, fpk, x, y, nets, desc in PARTS:
-        for (num, typ, shape, px, py, w, h, drill) in FP[fpk][1]():
+        for (num, typ, shape, px, py, w, h, drill, _rr) in FP[fpk][1]():
             net = nets.get(num)
             ax, ay = x + px, y + py
             if typ == "npth":
