@@ -148,8 +148,28 @@ Das Layout wird nach Schaltplan und Datenblatt gezeichnet. Die Werte unten sind 
 
 | Rev | Inhalt |
 |---|---|
-| A | UKW (FMI), MW und LW (AMI mit Ferritstab). Kein KW-Zweig. Zum Testen von Chip, Quarz, I2C, Audio, Antennen. |
+| A | UKW (FMI), MW und LW (AMI mit Ferritstab). Kein KW-Zweig. Zum Testen von Chip, Quarz, I2C, Audio, Antennen. KiCad-Entwurf liegt in `hardware/kicad/` (siehe `hardware/README.md`). |
 | B | Korrekturen aus Rev A. Dazu KW über AMI (Tiefpass-Spule 4.7 µH, 33 pF, Umschalter). Version für den Kurs. |
+
+## 4e. Stiftleiste J1 zur Hauptplatine (Rev A)
+
+1x9, Raster 2.54 mm, an der rechten Kante. Pin 1 ist quadratisch und oben.
+
+| Pin | Signal | Bemerkung |
+|---|---|---|
+| 1 | AUDIO_L | Tonsignal links, nach 470 nF, 20 kΩ gegen GND |
+| 2 | AUDIO_R | Tonsignal rechts |
+| 3 | GND | |
+| 4 | 3V3 | Versorgung aus dem LDO der Hauptplatine |
+| 5 | SDA | I2C Daten, Pull-up 4.7 kΩ auf dem Board |
+| 6 | SCL | I2C Takt, Pull-up 4.7 kΩ auf dem Board |
+| 7 | RST | Reset, Pull-up 4.7 kΩ auf dem Board |
+| 8 | INT | GPO2/INTB, optional |
+| 9 | GND | |
+
+Der Pinplan der Hauptplatine muss dieser Reihenfolge folgen (Buchsenleiste 1x9).
+
+Antennen: J2 (FM, Pin 1 Antenne, Pin 2 GND) und J3 (AM/LW, Pin 1 und Pin 2 für den Ferritstab). Befestigung: 2 Löcher mit 2.7 mm für M2.5. Platine 44 x 30 mm.
 
 ## 5. Bestückung
 
