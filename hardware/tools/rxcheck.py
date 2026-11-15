@@ -36,8 +36,32 @@ def dist(a, b):
             return min(math.hypot(x - p.x, y - p.y) for x, y in seg_pts(q)) - p.r - q.w / 2
     raise ValueError((ka, kb))
 
+def courtyard_errors():
+    shapes = []
+    for ref, kind, val, fpk, x, y, nets, d in PARTS:
+        for s in courtyard(fpk):
+            if s[0] == "rect": shapes.append((ref, "rect", x + s[1], y + s[2], x + s[3], y + s[4]))
+            else: shapes.append((ref, "circle", x + s[1], y + s[2], s[3], 0))
+    errs = []; seen = set()
+    for i in range(len(shapes)):
+        for j in range(i + 1, len(shapes)):
+            a, b = shapes[i], shapes[j]
+            if a[0] == b[0]: continue
+            hit = False
+            if a[1] == "rect" and b[1] == "rect":
+                hit = min(a[4], b[4]) - max(a[2], b[2]) > 1e-6 and min(a[5], b[5]) - max(a[3], b[3]) > 1e-6
+            elif a[1] == "circle" and b[1] == "circle":
+                hit = math.hypot(a[2] - b[2], a[3] - b[3]) < a[4] + b[4] - 1e-6
+            else:
+                ci, re_ = (a, b) if a[1] == "circle" else (b, a)
+                dx = max(re_[2] - ci[2], 0, ci[2] - re_[4]); dy = max(re_[3] - ci[3], 0, ci[3] - re_[5])
+                hit = math.hypot(dx, dy) < ci[4] - 1e-6
+            if hit and (a[0], b[0]) not in seen:
+                seen.add((a[0], b[0])); errs.append(f"Abstandsflaechen ueberlappen: {a[0]} und {b[0]}")
+    return errs
+
 def check(r):
-    errs = []; items = r.items; n = len(items); minc = 9
+    errs = courtyard_errors(); items = r.items; n = len(items); minc = 9
     for i in range(n):
         for j in range(i + 1, n):
             a, b = items[i], items[j]
