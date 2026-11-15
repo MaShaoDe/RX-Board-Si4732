@@ -3,7 +3,7 @@ Comment,Designator,Footprint,LCSC Part #,Beschreibung,Bestueckung
 22p,"C2,C3",C_0805_2012Metric,C1804,Kondensator C0G 22 pF,ja
 1u,C4,C_0805_2012Metric,C49326705,Kondensator X7R 1 uF,ja
 470n,"C5,C6,C8",C_0805_2012Metric,C106846,Kondensator X7R 470 nF,ja
-1n,C7,C_0805_2012Metric,,Kondensator C0G 1 nF,ja
+1n,C7,C_0805_2012Metric,C62774,Kondensator C0G 1 nF,ja
 BAV99,"D1,D2",SOT-23,C68983,Doppeldiode BAV99 (ESD-Schutz),ja
 RX_BUS,J1,PinHeader_1x09_P2.54mm_Vertical,,"Stiftleiste 1x9, 2.54 mm","nein, Kinder loeten"
 FM_ANT,J2,PinHeader_1x02_P2.54mm_Vertical,,"Stiftleiste 1x2, 2.54 mm","nein, Kinder loeten"
