@@ -288,7 +288,7 @@ def build_bom():
         key = (val, FP[fpk][0])
         groups.setdefault(key, []).append(ref)
     rows = []
-    lcsc = {"Si4732-A10-GS": "C2155558"}
+    lcsc = {"Si4732-A10-GS": "C2155558", "100n": "C49678"}
     desc = {"100n": "Kondensator X7R 100 nF", "22p": "Kondensator C0G 22 pF", "1u": "Kondensator X7R 1 uF", "470n": "Kondensator X7R 470 nF",
             "1n": "Kondensator C0G 1 nF", "56n": "Induktivitaet 56 nH, Q>=15 bei 100 MHz", "4.7k": "Widerstand 4.7 kOhm", "20k": "Widerstand 20 kOhm",
             "0R": "Widerstand 0 Ohm", "BAV99": "Doppeldiode BAV99 (ESD-Schutz)", "Si4732-A10-GS": "AM/FM/SW/LW/RDS Empfaenger",

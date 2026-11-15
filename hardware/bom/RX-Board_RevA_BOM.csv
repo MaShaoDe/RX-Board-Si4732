@@ -1,5 +1,5 @@
 Comment,Designator,Footprint,LCSC Part #,Beschreibung,Bestueckung
-100n,C1,C_0805_2012Metric,,Kondensator X7R 100 nF,ja
+100n,C1,C_0805_2012Metric,C49678,Kondensator X7R 100 nF,ja
 22p,"C2,C3",C_0805_2012Metric,,Kondensator C0G 22 pF,ja
 1u,C4,C_0805_2012Metric,,Kondensator X7R 1 uF,ja
 470n,"C5,C6,C8",C_0805_2012Metric,,Kondensator X7R 470 nF,ja
