@@ -1,6 +1,7 @@
 """Schreibt KiCad-8/9-Dateien (Schaltplan, Platine, Projekt) und die Stueckliste fuer das RX-Board Rev A."""
 import uuid, os, json, csv, math
 from rxroute import *
+from rxmodel import _LIB
 from rxcheck import check
 
 NS = uuid.UUID("6f1c2a4e-0b9d-4c55-9a3e-5a2d7a1e4b10")
@@ -18,7 +19,7 @@ def silk_candidates():
     return []
 
 def text_bbox(x, y, t, size, just):
-    w = 0.62 * size * len(t); h = size * 1.1
+    w = 0.95 * size * len(t); h = size * 1.2
     if just == "left": return (x, y - h / 2, x + w, y + h / 2)
     if just == "right": return (x - w, y - h / 2, x, y + h / 2)
     return (x - w / 2, y - h / 2, x + w / 2, y + h / 2)
@@ -33,12 +34,18 @@ def build_pcb(r):
     a(' (setup (pad_to_mask_clearance 0.05) (allow_soldermask_bridges_in_footprints no) (pcbplotparams (layerselection 0x00010fc_ffffffff) (plot_on_all_layers_selection 0x0000000_00000000) (disableapertmacros no) (usegerberextensions no) (usegerberattributes yes) (usegerberadvancedattributes yes) (creategerberjobfile yes) (dashed_line_dash_ratio 12.0) (dashed_line_gap_ratio 3.0) (svgprecision 4) (plotframeref no) (viasonmask no) (mode 1) (useauxorigin no) (hpglpennumber 1) (hpglpenspeed 20) (hpglpendiameter 15.0) (pdf_front_fp_property_popups yes) (pdf_back_fp_property_popups yes) (dxfpolygonmode yes) (dxfimperialunits yes) (dxfusepcbnewfont yes) (psnegative no) (psa4output no) (plotreference yes) (plotvalue yes) (plotfptext yes) (plotinvisibletext no) (sketchpadsonfab no) (subtractmaskfromsilk no) (outputformat 1) (mirror no) (drillshape 0) (scaleselection 1) (outputdirectory "gerber/")))')
     a(' (net 0 "")')
     for n in NETS: a(' (net %d "%s")' % (NETIDX[n], n))
-    # Beschriftungs-Platzierung: Referenz neben dem Bauteil ohne Ueberdeckung von Pads
+    # Beschriftungs-Platzierung: Referenz neben dem Bauteil ohne Ueberdeckung von Pads und Silkscreen
     pads_box = []
     for p in r.pads:
         if p.kind == "rect": pads_box.append((p.x0 - 0.15, p.y0 - 0.15, p.x1 + 0.15, p.y1 + 0.15))
         else: pads_box.append((p.x - p.r - 0.15, p.y - p.r - 0.15, p.x + p.r + 0.15, p.y + p.r + 0.15))
+    for ref, kind, val, fpk, x, y, nets, d in PARTS:
+        for (a0, b0, a1, b1) in silk_boxes(fpk): pads_box.append((x + a0, y + b0, x + a1, y + b1))
     used = []
+    FRONT = [("RX-Board Si4732", 6.0, 2.0), ("Rev A 2026", 6.0, 3.6), ("SN:_____", 6.0, 5.2)]
+    for t, x, y in FRONT: used.append(text_bbox(x, y, t, 1.0, "left"))
+    for i, t in enumerate(["L", "R", "GND", "3V3", "SDA", "SCL", "RST", "INT", "GND"]): used.append(text_bbox(38.6, J1Y0 + 2.54 * i, t, 1.0, "right"))
+    used.append(text_bbox(4.6, 14.2, "FM", 1.0, "left")); used.append(text_bbox(4.6, 20.8, "AM", 1.0, "left"))
     def free(bb):
         if bb[0] < 0.6 or bb[1] < 0.6 or bb[2] > W - 0.6 or bb[3] > H - 0.6: return False
         for q in pads_box + used:
@@ -47,12 +54,14 @@ def build_pcb(r):
     ref_pos = {}
     for ref, kind, val, fpk, x, y, nets, d in PARTS:
         if kind == "hole": continue
-        pl = [(px, py, w, h) for (_, _, _, px, py, w, h, _) in FP[fpk][1]()]
-        ex = max(abs(px) + w / 2 for px, py, w, h in pl); ey = max(abs(py) + h / 2 for px, py, w, h in pl)
-        size = 1.0; tw = 0.62 * size * len(ref)
-        cands = [(0, -(ey + 0.8)), (0, ey + 0.8), (-(ex + tw / 2 + 0.3), 0), (ex + tw / 2 + 0.3, 0),
-                 (0, -(ey + 1.9)), (0, ey + 1.9), (-(ex + tw / 2 + 0.3), -(ey + 1)), (ex + tw / 2 + 0.3, ey + 1)]
-        if ref == "U1": cands = [(-6.2, -5.6), (6.2, -5.6), (0, -6.4), (0, 6.4)]
+        cy_ = courtyard(fpk)
+        bx = [s for s in cy_ if s[0] == "rect"]
+        if bx: ex = max(max(abs(s[1]), abs(s[3])) for s in bx); eyu = -min(s[2] for s in bx); eyd = max(s[4] for s in bx); exl = -min(s[1] for s in bx); exr = max(s[3] for s in bx)
+        else: ex = exl = exr = max(s[3] for s in cy_); eyu = eyd = ex
+        size = 1.0; tw = 0.95 * size * len(ref)
+        cands = [(0, -(eyu + 0.7)), (0, eyd + 0.7), (-(exl + tw / 2 + 0.2), 0), (exr + tw / 2 + 0.2, 0),
+                 (0, -(eyu + 1.8)), (0, eyd + 1.8), (-(exl + tw / 2 + 0.2), -1.4), (exr + tw / 2 + 0.2, 1.4),
+                 (-(exl + tw / 2 + 0.2), 1.4), (exr + tw / 2 + 0.2, -1.4)]
         chosen = None
         for dx, dy in cands:
             bb = text_bbox(x + dx, y + dy, ref, size, "center")
@@ -60,11 +69,14 @@ def build_pcb(r):
         if chosen is None:
             r.log.append(f"Hinweis: kein freier Platz fuer {ref}"); chosen = (cands[0][0], cands[0][1], text_bbox(x + cands[0][0], y + cands[0][1], ref, size, "center"))
         used.append(chosen[2]); ref_pos[ref] = (chosen[0], chosen[1])
+    LIBN = {}
     for ref, kind, val, fpk, x, y, nets, d in PARTS:
         name, padfn, attr = FP[fpk]
+        lib = _LIB[name]
         sym_uuid = U("sym-" + ref)
         a(' (footprint "%s" (layer "F.Cu") (uuid "%s") (at %s %s)' % (name, U("fp-" + ref), f(x), f(y)))
-        a('  (descr "%s")' % esc(d))
+        a('  (descr "%s")' % esc(lib["descr"]))
+        if lib["tags"]: a('  (tags "%s")' % esc(lib["tags"]))
         if kind != "hole":
             rx, ry = ref_pos[ref]
             a('  (property "Reference" "%s" (at %s %s 0) (layer "F.SilkS") (uuid "%s") (effects (font (size 1 1) (thickness 0.15))))' % (ref, f(rx), f(ry), U("ref-" + ref)))
@@ -74,20 +86,30 @@ def build_pcb(r):
         a('  (property "Footprint" "%s" (at 0 0 0) (layer "F.Fab") (hide yes) (uuid "%s") (effects (font (size 1.27 1.27))))' % (name, U("fpp-" + ref)))
         a('  (path "/%s/%s")' % (ROOT, sym_uuid))
         a('  (attr %s)' % attr)
-        if fpk == "soic":
-            a('  (fp_circle (center -3.9 -5.4) (end -3.6 -5.4) (stroke (width 0.15) (type solid)) (fill solid) (layer "F.SilkS") (uuid "%s"))' % U("dot-" + ref))
-        for (num, typ, shape, px, py, w, h, drill) in padfn():
+        for gi, g in enumerate(lib["gfx"]):
+            gu = U("g-%s-%d" % (ref, gi)); k = g["kind"]
+            stroke = '(stroke (width %s) (type %s))' % (f(g.get("width", 0.12)), g.get("stype", "solid"))
+            fill = "solid" if g.get("fill") == "yes" else "none"
+            if k == "fp_line": a('  (fp_line (start %s %s) (end %s %s) %s (layer "%s") (uuid "%s"))' % (f(g["start"][0]), f(g["start"][1]), f(g["end"][0]), f(g["end"][1]), stroke, g["layer"], gu))
+            elif k == "fp_rect": a('  (fp_rect (start %s %s) (end %s %s) %s (fill %s) (layer "%s") (uuid "%s"))' % (f(g["start"][0]), f(g["start"][1]), f(g["end"][0]), f(g["end"][1]), stroke, fill, g["layer"], gu))
+            elif k == "fp_circle": a('  (fp_circle (center %s %s) (end %s %s) %s (fill %s) (layer "%s") (uuid "%s"))' % (f(g["center"][0]), f(g["center"][1]), f(g["end"][0]), f(g["end"][1]), stroke, fill, g["layer"], gu))
+            elif k == "fp_poly": a('  (fp_poly (pts %s) %s (fill %s) (layer "%s") (uuid "%s"))' % (" ".join("(xy %s %s)" % (f(p[0]), f(p[1])) for p in g["pts"]), stroke, fill, g["layer"], gu))
+            elif k == "fp_text": a('  (fp_text %s "%s" (at %s %s 0) (layer "%s") (uuid "%s") (effects (font (size %s %s) (thickness %s))))' % (g["ttype"], g["text"], f(g["at"][0]), f(g["at"][1]), g["layer"], gu, f(g["size"][0]), f(g["size"][1]), f(g["thickness"])))
+        for (num, typ, shape, px, py, w, h, drill, rr) in padfn():
             net = nets.get(num)
             nt = (' (net %d "%s")' % (NETIDX[net], net)) if net else ""
             pu = U("pad-%s-%s" % (ref, num))
+            pl = [p for p in lib["pads"] if p["num"] == num][0]
+            lay = " ".join('"%s"' % x for x in pl["layers"])
             if typ == "smd":
-                lay = '"F.Cu" "F.Paste" "F.Mask"' if shape == "roundrect" else '"F.Cu" "F.Mask"'
-                extra = " (roundrect_rratio 0.25)" if shape == "roundrect" else ""
+                extra = (" (roundrect_rratio %s)" % f(rr)) if rr is not None else ""
                 a('  (pad "%s" smd %s (at %s %s) (size %s %s) (layers %s)%s%s (uuid "%s"))' % (num, shape, f(px), f(py), f(w), f(h), lay, extra, nt, pu))
             elif typ == "thru":
-                a('  (pad "%s" thru_hole %s (at %s %s) (size %s %s) (drill %s) (layers "*.Cu" "*.Mask")%s (uuid "%s"))' % (num, shape, f(px), f(py), f(w), f(h), f(drill), nt, pu))
+                a('  (pad "%s" thru_hole %s (at %s %s) (size %s %s) (drill %s) (layers %s)%s (uuid "%s"))' % (num, shape, f(px), f(py), f(w), f(h), f(drill), lay, nt, pu))
             else:
-                a('  (pad "%s" np_thru_hole circle (at %s %s) (size %s %s) (drill %s) (layers "*.Cu" "*.Mask") (uuid "%s"))' % (num, f(px), f(py), f(w), f(h), f(drill), pu))
+                a('  (pad "%s" np_thru_hole circle (at %s %s) (size %s %s) (drill %s) (layers %s) (uuid "%s"))' % (num, f(px), f(py), f(w), f(h), f(drill), lay, pu))
+        if lib["model"]:
+            a('  (model "%s" (offset (xyz 0 0 0)) (scale (xyz 1 1 1)) (rotate (xyz 0 0 0)))' % lib["model"])
         a(' )')
     # Leiterbahnen und Vias
     k = 0
@@ -101,17 +123,19 @@ def build_pcb(r):
     # Kontur
     a(' (gr_rect (start 0 0) (end %s %s) (stroke (width 0.1) (type default)) (fill none) (layer "Edge.Cuts") (uuid "%s"))' % (f(W), f(H), U("edge")))
     # Beschriftung vorne
-    front = [("RX-Board Si4732", 6.2, 2.6, 1.0), ("Rev A  2026", 6.2, 4.2, 1.0), ("SN:_____", 6.2, 5.8, 1.0)]
+    front = [(t, x, y, 1.0) for t, x, y in FRONT]
     for t, x, y, s in front:
         a(' (gr_text "%s" (at %s %s) (layer "F.SilkS") (uuid "%s") (effects (font (size %s %s) (thickness 0.15)) (justify left)))' % (t, f(x), f(y), U("ft" + t), f(s), f(s)))
     labels = [("L", 3), ("R", 3), ("GND", 3), ("3V3", 3), ("SDA", 3), ("SCL", 3), ("RST", 3), ("INT", 3), ("GND", 3)]
     for i, (t, _) in enumerate(labels):
         y = J1Y0 + 2.54 * i
-        a(' (gr_text "%s" (at 38.0 %s) (layer "F.SilkS") (uuid "%s") (effects (font (size 1 1) (thickness 0.15)) (justify right)))' % (t, f(y), U("jl%d" % i)))
+        a(' (gr_text "%s" (at 38.6 %s) (layer "F.SilkS") (uuid "%s") (effects (font (size 1 1) (thickness 0.15)) (justify right)))' % (t, f(y), U("jl%d" % i)))
     a(' (gr_text "FM" (at 4.6 14.2) (layer "F.SilkS") (uuid "%s") (effects (font (size 1 1) (thickness 0.15)) (justify left)))' % U("fm"))
     a(' (gr_text "AM" (at 4.6 20.8) (layer "F.SilkS") (uuid "%s") (effects (font (size 1 1) (thickness 0.15)) (justify left)))' % U("am"))
     # Beschriftung hinten (gespiegelt)
-    back = [("RX-Board Si4732  Rev A", 8.0, 9.0), (COPY, 8.0, 11.0), ("github.com/MaShaoDe/RX-Board-Si4732", 8.0, 13.0), ("CERN-OHL-P-2.0", 8.0, 15.0), ("SN:_____", 8.0, 17.0)]
+    # gespiegelter Text wachsen nach links vom Ankerpunkt: Anker rechts setzen
+    back = [("RX-Board Si4732 Rev A", 36.0, 8.0), ("Copyright 2026", 36.0, 9.6), ("FerienBSD aka Marcel Sauder", 36.0, 11.2),
+            ("github.com/MaShaoDe/", 36.0, 12.8), ("RX-Board-Si4732", 36.0, 14.4), ("CERN-OHL-P-2.0", 36.0, 16.0), ("SN:_____", 36.0, 17.6)]
     for i, (t, x, y) in enumerate(back):
         a(' (gr_text "%s" (at %s %s) (layer "B.SilkS") (uuid "%s") (effects (font (size 1 1) (thickness 0.15)) (justify left mirror)))' % (t, f(x), f(y), U("bt%d" % i)))
     # Masse-Zonen
@@ -264,9 +288,9 @@ def build_bom():
         key = (val, FP[fpk][0])
         groups.setdefault(key, []).append(ref)
     rows = []
-    lcsc = {"Si4732-A10-GS": "C2155558"}
+    lcsc = {"Si4732-A10-GS": "C2155558", "100n": "C49678", "1u": "C49326705", "470n": "C106846", "4.7k": "C17673", "20k": "C2912590", "BAV99": "C68983", "32.768kHz": "C32346", "22p": "C1804", "0R": "C17477", "56n": "C373725", "1n": "C62774"}
     desc = {"100n": "Kondensator X7R 100 nF", "22p": "Kondensator C0G 22 pF", "1u": "Kondensator X7R 1 uF", "470n": "Kondensator X7R 470 nF",
-            "1n": "Kondensator C0G 1 nF", "56n": "Induktivitaet 56 nH, Q>=15 bei 100 MHz", "4.7k": "Widerstand 4.7 kOhm", "20k": "Widerstand 20 kOhm",
+            "1n": "Kondensator C0G 1 nF", "56n": "Induktivitaet 56 nH, Q>=60 bei 200 MHz", "4.7k": "Widerstand 4.7 kOhm", "20k": "Widerstand 20 kOhm",
             "0R": "Widerstand 0 Ohm", "BAV99": "Doppeldiode BAV99 (ESD-Schutz)", "Si4732-A10-GS": "AM/FM/SW/LW/RDS Empfaenger",
             "32.768kHz": "Quarz 32.768 kHz, 3.2x1.5 mm, CL 12.5 pF", "RX_BUS": "Stiftleiste 1x9, 2.54 mm", "FM_ANT": "Stiftleiste 1x2, 2.54 mm", "AM_ANT": "Stiftleiste 1x2, 2.54 mm"}
     for (val, fp), refs in sorted(groups.items(), key=lambda kv: kv[1][0]):
@@ -283,6 +307,10 @@ def main():
     bomdir = os.path.join(OUT, "..", "bom"); os.makedirs(bomdir, exist_ok=True)
     with open(os.path.join(bomdir, "RX-Board_RevA_BOM.csv"), "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh); w.writerow(["Comment", "Designator", "Footprint", "LCSC Part #", "Beschreibung", "Bestueckung"]); w.writerows(build_bom())
+    with open(os.path.join(bomdir, "RX-Board_RevA_BOM_JLCPCB.csv"), "w", newline="", encoding="utf-8") as fh:
+        w = csv.writer(fh); w.writerow(["Comment", "Designator", "Footprint", "LCSC Part #"])
+        for row in build_bom():
+            if row[5] == "ja": w.writerow([row[0], row[1], row[2], row[3]])
     print("\n".join(r.log)); print("Pruefung:", errs or "keine Fehler", "| kleinster Abstand %.3f mm" % minc)
     return r
 

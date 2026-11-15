@@ -8,6 +8,7 @@ NX, NY = int(round(W / RES)) + 1, int(round(H / RES)) + 1
 CLR = 0.2          # Abstand Kupfer zu Kupfer
 EDGE = 0.45        # Abstand Kupfer zur Platinenkante
 VIA_D, VIA_DRILL = 0.6, 0.3
+VIA_PITCH = 1.0   # Mittenabstand Via zu Via (Bohrung zu Bohrung mindestens 0.5 mm)
 HOLE_R = 1.35 + 0.6
 WIDTH = {"3V3": 0.4}
 DEF_W = 0.25
@@ -21,7 +22,7 @@ class Item:
 def pad_items():
     items = []
     for ref, kind, val, fpk, x, y, nets, desc in PARTS:
-        for (num, typ, shape, px, py, w, h, drill) in FP[fpk][1]():
+        for (num, typ, shape, px, py, w, h, drill, _rr) in FP[fpk][1]():
             net = nets.get(num)
             ax, ay = x + px, y + py
             if typ == "npth":
@@ -86,6 +87,8 @@ class Router:
         b1, b2 = border_mask(EDGE + hw), border_mask(EDGE + VIA_D / 2)
         for l in (0, 1): tm[l] |= b1; vm[l] |= b2
         via_bad = vm[0] | vm[1]
+        for it in self.items:
+            if getattr(it, "via", False): paint_disk(via_bad, it.x, it.y, VIA_PITCH)
         return tm, via_bad
 
     def route_net(self, net, bbox_margin=None):
@@ -96,13 +99,14 @@ class Router:
         def pad_cells(p):
             cs = set()
             if p.kind == "rect":
-                for iy in range(cell(p.y0), cell(p.y1) + 1):
-                    for ix in range(cell(p.x0), cell(p.x1) + 1): cs.add((ix, iy))
+                for iy in range(cell(p.y0) - 1, cell(p.y1) + 2):
+                    for ix in range(cell(p.x0) - 1, cell(p.x1) + 2):
+                        if p.x0 + 0.03 <= ix * RES <= p.x1 - 0.03 and p.y0 + 0.03 <= iy * RES <= p.y1 - 0.03: cs.add((ix, iy))
             else:
                 r = p.r
                 for iy in range(cell(p.y - r), cell(p.y + r) + 1):
                     for ix in range(cell(p.x - r), cell(p.x + r) + 1):
-                        if (ix * RES - p.x) ** 2 + (iy * RES - p.y) ** 2 <= r * r: cs.add((ix, iy))
+                        if (ix * RES - p.x) ** 2 + (iy * RES - p.y) ** 2 <= (r - 0.03) ** 2: cs.add((ix, iy))
             return cs
         connected = [pads[0]]
         tree = {}   # (ix,iy,l) -> exact (x,y) or None
@@ -169,8 +173,10 @@ class Router:
         for i, c in enumerate(pts):
             x, y = c[0] * RES, c[1] * RES
             if i == 0 and c in tree and tree[c]: x, y = tree[c]
-            if i == len(pts) - 1 and (c[0], c[1]) == (cell(tgt.x), cell(tgt.y)): x, y = tgt.x, tgt.y
             poly.append((x, y, c[2]))
+        if getattr(tgt, "pad", None) not in (None, "") or hasattr(tgt, "ref"):
+            last = poly[-1]
+            if abs(last[0] - tgt.x) > 1e-6 or abs(last[1] - tgt.y) > 1e-6: poly.append((tgt.x, tgt.y, last[2]))
         # in Lagenabschnitte teilen
         runs = []; cur = [poly[0]]
         for a, b in zip(poly, poly[1:]):
@@ -199,12 +205,11 @@ class Router:
 
     def gnd_stubs(self, net="GND"):
         hw = DEF_W / 2
-        tm, via_bad = self.masks_for(net, hw)
-        # keine Vias in oder direkt an Pads
         nv = np.zeros((NY, NX), bool)
         for p in self.pads: paint_item([nv, nv], p, VIA_D / 2 + 0.15)
-        via_bad = via_bad | nv
         for p in [p for p in self.pads if p.net == net and p.layers == [0]]:
+            tm, via_bad = self.masks_for(net, hw)
+            via_bad = via_bad | nv
             # Stub bis zu einer Via-Position
             tree = {(cell(p.x), cell(p.y), 0): (p.x, p.y)}
             res = self.astar_via(tree, p, tm, via_bad)

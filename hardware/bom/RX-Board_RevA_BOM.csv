@@ -1,16 +1,16 @@
 Comment,Designator,Footprint,LCSC Part #,Beschreibung,Bestueckung
-100n,C1,C_0805_2012Metric,,Kondensator X7R 100 nF,ja
-22p,"C2,C3",C_0805_2012Metric,,Kondensator C0G 22 pF,ja
-1u,C4,C_0805_2012Metric,,Kondensator X7R 1 uF,ja
-470n,"C5,C6,C8",C_0805_2012Metric,,Kondensator X7R 470 nF,ja
-1n,C7,C_0805_2012Metric,,Kondensator C0G 1 nF,ja
-BAV99,"D1,D2",SOT-23,,Doppeldiode BAV99 (ESD-Schutz),ja
+100n,C1,C_0805_2012Metric,C49678,Kondensator X7R 100 nF,ja
+22p,"C2,C3",C_0805_2012Metric,C1804,Kondensator C0G 22 pF,ja
+1u,C4,C_0805_2012Metric,C49326705,Kondensator X7R 1 uF,ja
+470n,"C5,C6,C8",C_0805_2012Metric,C106846,Kondensator X7R 470 nF,ja
+1n,C7,C_0805_2012Metric,C62774,Kondensator C0G 1 nF,ja
+BAV99,"D1,D2",SOT-23,C68983,Doppeldiode BAV99 (ESD-Schutz),ja
 RX_BUS,J1,PinHeader_1x09_P2.54mm_Vertical,,"Stiftleiste 1x9, 2.54 mm","nein, Kinder loeten"
 FM_ANT,J2,PinHeader_1x02_P2.54mm_Vertical,,"Stiftleiste 1x2, 2.54 mm","nein, Kinder loeten"
 AM_ANT,J3,PinHeader_1x02_P2.54mm_Vertical,,"Stiftleiste 1x2, 2.54 mm","nein, Kinder loeten"
-56n,L1,L_0805_2012Metric,,"Induktivitaet 56 nH, Q>=15 bei 100 MHz",ja
-4.7k,"R1,R2,R3",R_0805_2012Metric,,Widerstand 4.7 kOhm,ja
-20k,"R4,R5,R6",R_0805_2012Metric,,Widerstand 20 kOhm,ja
-0R,R7,R_0805_2012Metric,,Widerstand 0 Ohm,ja
+56n,L1,L_0805_2012Metric,C373725,"Induktivitaet 56 nH, Q>=60 bei 200 MHz",ja
+4.7k,"R1,R2,R3",R_0805_2012Metric,C17673,Widerstand 4.7 kOhm,ja
+20k,"R4,R5,R6",R_0805_2012Metric,C2912590,Widerstand 20 kOhm,ja
+0R,R7,R_0805_2012Metric,C17477,Widerstand 0 Ohm,ja
 Si4732-A10-GS,U1,SOIC-16_3.9x9.9mm_P1.27mm,C2155558,AM/FM/SW/LW/RDS Empfaenger,ja
-32.768kHz,X1,Crystal_SMD_3215-2Pin_3.2x1.5mm,,"Quarz 32.768 kHz, 3.2x1.5 mm, CL 12.5 pF",ja
+32.768kHz,X1,Crystal_SMD_3215-2Pin_3.2x1.5mm,C32346,"Quarz 32.768 kHz, 3.2x1.5 mm, CL 12.5 pF",ja
