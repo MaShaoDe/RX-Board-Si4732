@@ -1,0 +1,47 @@
+{
+  "board": {
+    "design_settings": {
+      "rules": {
+        "min_clearance": 0.2,
+        "min_track_width": 0.2,
+        "min_via_diameter": 0.6,
+        "min_through_hole_diameter": 0.3,
+        "min_copper_edge_clearance": 0.3,
+        "min_hole_to_hole": 0.5
+      },
+      "defaults": {
+        "copper_line_width": 0.25,
+        "board_outline_line_width": 0.1,
+        "silk_line_width": 0.15,
+        "silk_text_size_h": 1.0,
+        "silk_text_size_v": 1.0,
+        "silk_text_thickness": 0.15
+      }
+    }
+  },
+  "meta": {
+    "filename": "RX-Board-Si4732.kicad_pro",
+    "version": 1
+  },
+  "net_settings": {
+    "classes": [
+      {
+        "name": "Default",
+        "clearance": 0.2,
+        "track_width": 0.25,
+        "via_diameter": 0.6,
+        "via_drill": 0.3
+      }
+    ],
+    "meta": {
+      "version": 3
+    }
+  },
+  "sheets": [
+    [
+      "874a8843-502f-5db8-b0c6-46a58a6ab083",
+      "Root"
+    ]
+  ],
+  "text_variables": {}
+}
