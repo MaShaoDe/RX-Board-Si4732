@@ -4,7 +4,7 @@ Stand 2026-11-15. Für jedes Teil die Anforderung, den Suchbegriff im JLCPCB-Tei
 
 | Designator | Wert | Bauform | Anforderung | Suchbegriff | LCSC |
 |---|---|---|---|---|---|
-| C1 | 100 nF | 0805 | X7R, mindestens 16 V | `100nF 0805 X7R` | |
+| C1 | 100 nF | 0805 | X7R, mindestens 16 V | `100nF 0805 X7R` | C49678 (Yageo, 50 V, bestätigt) |
 | C4 | 1 µF | 0805 | X7R, mindestens 10 V | `1uF 0805 X7R` | |
 | C2, C3 | 22 pF | 0805 | C0G/NP0, 5 % oder besser, mindestens 50 V | `22pF 0805 C0G` | |
 | C7 | 1 nF | 0805 | C0G/NP0, 10 % oder besser (Antennenpfad) | `1nF 0805 C0G` | |
