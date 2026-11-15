@@ -74,7 +74,7 @@ Ziel: Die beste Kombination als Wert für Rev B festhalten.
 
 | Symptom | Prüfen |
 |---|---|
-| Strom zu hoch | Lötbrücken an U1, Kondensator C4 oder C1 falsch gepolt oder verdreht, Pin 1 von U1 |
+| Strom zu hoch | Lötbrücken an U1, Kurzschluss an C1 oder C4, Pin 1 von U1 verdreht |
 | Keine I2C-Antwort | Reset-Folge, SDA und SCL vertauscht, Pegel 3.3 V, Lötstellen |
 | Antwort, aber kein Ton | Lautstärke, Stummschaltung, Property RX_VOLUME, Koppelkondensatoren C5 und C6 |
 | Kein Sender | Antenne an J2, FM_TUNE_STATUS Valid-Bit, Quarz läuft, 500 ms Wartezeit eingehalten |
