@@ -1,17 +1,17 @@
 # hardware
 
-Rev A des RX-Boards (UKW, MW, LW). Stand 2026-11-15: **Entwurf, in KiCad noch nicht geöffnet und nicht geprüft.**
+Rev A des RX-Boards (UKW, MW, LW). Stand 2026-11-15: **Entwurf.** ERC in KiCad 10: 0 Meldungen. DRC Durchgang 2: 0 Fehler. Die Footprints stammen jetzt aus der echten KiCad-Bibliothek (`tools/fplib.json`). Noch offen: DRC der neuen Version, Antennenpfade im Labortest, JLCPCB-Vorschau.
 
 ## Inhalt
 
 | Pfad | Inhalt |
 |---|---|
-| `kicad/RX-Board-Si4732.kicad_pro` | KiCad-Projekt (Format KiCad 8, öffnet in KiCad 9) |
+| `kicad/RX-Board-Si4732.kicad_pro` | KiCad-Projekt (erzeugt im KiCad-8-Format, in KiCad 10 geladen und gespeichert) |
 | `kicad/RX-Board-Si4732.kicad_sch` | Schaltplan. Verbindungen laufen über gleichnamige Netzbezeichner, nicht über gezeichnete Leitungen |
 | `kicad/RX-Board-Si4732.kicad_pcb` | Platine 44 x 30 mm, 2 Lagen, bestückt und verlegt, Masseflächen vorne und hinten |
 | `bom/RX-Board_RevA_BOM.csv` | Stückliste. Die Spalte "LCSC Part #" ist bis auf den Chip noch leer |
 | `preview/layout-vorschau.png` | Grobe Vorschau des Layouts (kein KiCad-Bild) |
-| `tools/` | Python-Skripte, die diese Dateien erzeugen (siehe unten) |
+| `tools/` | Python-Skripte, die diese Dateien erzeugen (siehe unten). `fplib.json` enthält die Footprints aus der KiCad-Bibliothek |
 
 ## Erste Schritte in KiCad
 
@@ -27,6 +27,7 @@ Rev A des RX-Boards (UKW, MW, LW). Stand 2026-11-15: **Entwurf, in KiCad noch ni
 ```
 cd hardware/tools
 python3 rxwrite.py      # schreibt kicad/ und bom/
+python3 fpextract.py <von KiCad gespeicherte .kicad_pcb>   # nur nötig, um fplib.json aus der Bibliothek zu erneuern
 python3 rxcheck.py      # Abstands- und Verbindungsprüfung
 python3 rxsyntax.py ../kicad/RX-Board-Si4732.kicad_pcb ../kicad/RX-Board-Si4732.kicad_sch
 ```
