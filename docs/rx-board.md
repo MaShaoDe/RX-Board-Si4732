@@ -133,9 +133,9 @@ Das Layout wird nach Schaltplan und Datenblatt gezeichnet. Die Werte unten sind 
 * Gesamtkapazität am AMI klein halten: etwa 29 pF bei 300 µH (der Chip selbst hat 8 pF). Kurze Leitungen, kleine Pads.
 * Unter dem Ferritstab keine Massefläche und keine Leitung, Abstand etwa 6 mm (1/4 Zoll) oder die Breite des Stabs. Weit weg von Taktleitungen, ESP32 und Display. Aussen am Gerät oder an einem Kabel sitzt der Stab weniger im Störfeld.
 
-**KW (SW), Teleskop an AMI**
+**KW (SW), Teleskop an AMI (erst Rev B)**
 * Die Kurzwelle läuft beim Si4732 über AMI. Dafür braucht es eine Tiefpass-Spule 4.7 µH (Güte mindestens 20 bei 25 MHz), 33 pF als Sperrkreis für AM, und der Ferritstab dient als Spule gegen Masse. Alternativ eine feste Spule 220 µH, wenn kein AM gebraucht wird.
-* Umschalter (SPDT) zwischen KW-Teleskop und AM-Ferritstab, oder zwei getrennte Buchsen. Das ist noch zu entscheiden (Offene Punkte).
+* Umschalter (SPDT) zwischen KW-Teleskop und AM-Ferritstab, oder zwei getrennte Buchsen. Entscheid 2026-11-15: Die KW-Beschaltung kommt erst in Rev B.
 * Zwei ESD-Dioden (je höchstens 1 pF) an den Antennenbuchsen, weil die Teleskopantenne aussen liegt.
 
 **Layout allgemein**
@@ -143,6 +143,13 @@ Das Layout wird nach Schaltplan und Datenblatt gezeichnet. Die Werte unten sind 
 * RFGND lokal von GND trennen und an der Masseebene anbinden (Datenblatt Si473x).
 * Quarz so nah wie möglich an den Pins 2 und 13. Die RCLK-Leitung weit weg von SDIO führen.
 * Kein Schaltregler, keine Taktleitungen im Bereich 520 bis 1720 kHz in der Nähe der AM-Antenne.
+
+## 4d. Revisionen
+
+| Rev | Inhalt |
+|---|---|
+| A | UKW (FMI), MW und LW (AMI mit Ferritstab). Kein KW-Zweig. Zum Testen von Chip, Quarz, I2C, Audio, Antennen. |
+| B | Korrekturen aus Rev A. Dazu KW über AMI (Tiefpass-Spule 4.7 µH, 33 pF, Umschalter). Version für den Kurs. |
 
 ## 5. Bestückung
 
@@ -163,7 +170,7 @@ Das Layout wird nach Schaltplan und Datenblatt gezeichnet. Die Werte unten sind 
 
 1. Vollständiges Datenblatt des Si4732-A10: Es gibt öffentlich nur das 3-seitige Data Short. AN332 (Programming Guide) liegt vor und liefert Adresse, Bus-Modus und Start. Es fehlen weiter Applikationsschaltung mit Werten, Maximalwerte und Layout-Hinweise. Pinbelegung ist geprüft (Abschnitt 4a), die Werte in 4b sind Startwerte aus dem Mikroe-Schaltplan.
 2. Erledigt: Mikroe-Schaltplan gegengelesen (Abschnitt 4a und 4b).
-3. Erledigt: Ferritstab (180 bis 450 µH, 0.47 µF) nach AN383, siehe 4c. Offen: Kurzwelle auf AMI, Umschalter oder zwei Buchsen? Teleskop für FM und KW gemeinsam oder getrennt?
+3. Erledigt: Ferritstab (180 bis 450 µH, 0.47 µF) nach AN383, siehe 4c. Entscheid 2026-11-15: Rev A ohne Kurzwelle (UKW, MW, LW), KW in Rev B. Offen für Rev B: Umschalter oder zwei Buchsen, Teleskop für FM und KW gemeinsam oder getrennt.
 4. Schutz der Antenneneingänge gegen statische Aufladung (SMD, auf dem Board).
 5. Verfügbarkeit von Chip, Quarz und Kondensatoren beim Hersteller, Angebot einholen.
 6. Lizenzdatei der PU2CLR-Bibliothek einsehen, Autor in der Doku nennen.
