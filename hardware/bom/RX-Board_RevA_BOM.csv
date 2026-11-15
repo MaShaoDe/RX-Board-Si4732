@@ -8,7 +8,7 @@ BAV99,"D1,D2",SOT-23,C68983,Doppeldiode BAV99 (ESD-Schutz),ja
 RX_BUS,J1,PinHeader_1x09_P2.54mm_Vertical,,"Stiftleiste 1x9, 2.54 mm","nein, Kinder loeten"
 FM_ANT,J2,PinHeader_1x02_P2.54mm_Vertical,,"Stiftleiste 1x2, 2.54 mm","nein, Kinder loeten"
 AM_ANT,J3,PinHeader_1x02_P2.54mm_Vertical,,"Stiftleiste 1x2, 2.54 mm","nein, Kinder loeten"
-56n,L1,L_0805_2012Metric,C964072,"Induktivitaet 56 nH, Q>=15 bei 100 MHz",ja
+56n,L1,L_0805_2012Metric,C373725,"Induktivitaet 56 nH, Q>=60 bei 200 MHz",ja
 4.7k,"R1,R2,R3",R_0805_2012Metric,C17673,Widerstand 4.7 kOhm,ja
 20k,"R4,R5,R6",R_0805_2012Metric,C2912590,Widerstand 20 kOhm,ja
 0R,R7,R_0805_2012Metric,C17477,Widerstand 0 Ohm,ja

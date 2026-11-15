@@ -288,9 +288,9 @@ def build_bom():
         key = (val, FP[fpk][0])
         groups.setdefault(key, []).append(ref)
     rows = []
-    lcsc = {"Si4732-A10-GS": "C2155558", "100n": "C49678", "1u": "C49326705", "470n": "C106846", "4.7k": "C17673", "20k": "C2912590", "BAV99": "C68983", "32.768kHz": "C32346", "22p": "C1804", "0R": "C17477", "56n": "C964072"}
+    lcsc = {"Si4732-A10-GS": "C2155558", "100n": "C49678", "1u": "C49326705", "470n": "C106846", "4.7k": "C17673", "20k": "C2912590", "BAV99": "C68983", "32.768kHz": "C32346", "22p": "C1804", "0R": "C17477", "56n": "C373725"}
     desc = {"100n": "Kondensator X7R 100 nF", "22p": "Kondensator C0G 22 pF", "1u": "Kondensator X7R 1 uF", "470n": "Kondensator X7R 470 nF",
-            "1n": "Kondensator C0G 1 nF", "56n": "Induktivitaet 56 nH, Q>=15 bei 100 MHz", "4.7k": "Widerstand 4.7 kOhm", "20k": "Widerstand 20 kOhm",
+            "1n": "Kondensator C0G 1 nF", "56n": "Induktivitaet 56 nH, Q>=60 bei 200 MHz", "4.7k": "Widerstand 4.7 kOhm", "20k": "Widerstand 20 kOhm",
             "0R": "Widerstand 0 Ohm", "BAV99": "Doppeldiode BAV99 (ESD-Schutz)", "Si4732-A10-GS": "AM/FM/SW/LW/RDS Empfaenger",
             "32.768kHz": "Quarz 32.768 kHz, 3.2x1.5 mm, CL 12.5 pF", "RX_BUS": "Stiftleiste 1x9, 2.54 mm", "FM_ANT": "Stiftleiste 1x2, 2.54 mm", "AM_ANT": "Stiftleiste 1x2, 2.54 mm"}
     for (val, fp), refs in sorted(groups.items(), key=lambda kv: kv[1][0]):
