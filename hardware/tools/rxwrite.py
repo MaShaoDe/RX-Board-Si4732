@@ -18,7 +18,7 @@ def silk_candidates():
     return []
 
 def text_bbox(x, y, t, size, just):
-    w = 0.62 * size * len(t); h = size * 1.1
+    w = 0.95 * size * len(t); h = size * 1.2
     if just == "left": return (x, y - h / 2, x + w, y + h / 2)
     if just == "right": return (x - w, y - h / 2, x, y + h / 2)
     return (x - w / 2, y - h / 2, x + w / 2, y + h / 2)
@@ -39,6 +39,10 @@ def build_pcb(r):
         if p.kind == "rect": pads_box.append((p.x0 - 0.15, p.y0 - 0.15, p.x1 + 0.15, p.y1 + 0.15))
         else: pads_box.append((p.x - p.r - 0.15, p.y - p.r - 0.15, p.x + p.r + 0.15, p.y + p.r + 0.15))
     used = []
+    FRONT = [("RX-Board Si4732", 6.0, 2.0), ("Rev A 2026", 6.0, 3.6), ("SN:_____", 6.0, 5.2)]
+    for t, x, y in FRONT: used.append(text_bbox(x, y, t, 1.0, "left"))
+    for i, t in enumerate(["L", "R", "GND", "3V3", "SDA", "SCL", "RST", "INT", "GND"]): used.append(text_bbox(38.6, J1Y0 + 2.54 * i, t, 1.0, "right"))
+    used.append(text_bbox(4.6, 14.2, "FM", 1.0, "left")); used.append(text_bbox(4.6, 20.8, "AM", 1.0, "left"))
     def free(bb):
         if bb[0] < 0.6 or bb[1] < 0.6 or bb[2] > W - 0.6 or bb[3] > H - 0.6: return False
         for q in pads_box + used:
@@ -49,7 +53,7 @@ def build_pcb(r):
         if kind == "hole": continue
         pl = [(px, py, w, h) for (_, _, _, px, py, w, h, _) in FP[fpk][1]()]
         ex = max(abs(px) + w / 2 for px, py, w, h in pl); ey = max(abs(py) + h / 2 for px, py, w, h in pl)
-        size = 1.0; tw = 0.62 * size * len(ref)
+        size = 1.0; tw = 0.95 * size * len(ref)
         cands = [(0, -(ey + 0.8)), (0, ey + 0.8), (-(ex + tw / 2 + 0.3), 0), (ex + tw / 2 + 0.3, 0),
                  (0, -(ey + 1.9)), (0, ey + 1.9), (-(ex + tw / 2 + 0.3), -(ey + 1)), (ex + tw / 2 + 0.3, ey + 1)]
         if ref == "U1": cands = [(-6.2, -5.6), (6.2, -5.6), (0, -6.4), (0, 6.4)]
@@ -101,17 +105,18 @@ def build_pcb(r):
     # Kontur
     a(' (gr_rect (start 0 0) (end %s %s) (stroke (width 0.1) (type default)) (fill none) (layer "Edge.Cuts") (uuid "%s"))' % (f(W), f(H), U("edge")))
     # Beschriftung vorne
-    front = [("RX-Board Si4732", 6.2, 2.6, 1.0), ("Rev A  2026", 6.2, 4.2, 1.0), ("SN:_____", 6.2, 5.8, 1.0)]
+    front = [(t, x, y, 1.0) for t, x, y in FRONT]
     for t, x, y, s in front:
         a(' (gr_text "%s" (at %s %s) (layer "F.SilkS") (uuid "%s") (effects (font (size %s %s) (thickness 0.15)) (justify left)))' % (t, f(x), f(y), U("ft" + t), f(s), f(s)))
     labels = [("L", 3), ("R", 3), ("GND", 3), ("3V3", 3), ("SDA", 3), ("SCL", 3), ("RST", 3), ("INT", 3), ("GND", 3)]
     for i, (t, _) in enumerate(labels):
         y = J1Y0 + 2.54 * i
-        a(' (gr_text "%s" (at 38.0 %s) (layer "F.SilkS") (uuid "%s") (effects (font (size 1 1) (thickness 0.15)) (justify right)))' % (t, f(y), U("jl%d" % i)))
+        a(' (gr_text "%s" (at 38.6 %s) (layer "F.SilkS") (uuid "%s") (effects (font (size 1 1) (thickness 0.15)) (justify right)))' % (t, f(y), U("jl%d" % i)))
     a(' (gr_text "FM" (at 4.6 14.2) (layer "F.SilkS") (uuid "%s") (effects (font (size 1 1) (thickness 0.15)) (justify left)))' % U("fm"))
     a(' (gr_text "AM" (at 4.6 20.8) (layer "F.SilkS") (uuid "%s") (effects (font (size 1 1) (thickness 0.15)) (justify left)))' % U("am"))
     # Beschriftung hinten (gespiegelt)
-    back = [("RX-Board Si4732  Rev A", 8.0, 9.0), (COPY, 8.0, 11.0), ("github.com/MaShaoDe/RX-Board-Si4732", 8.0, 13.0), ("CERN-OHL-P-2.0", 8.0, 15.0), ("SN:_____", 8.0, 17.0)]
+    # gespiegelter Text wachsen nach links vom Ankerpunkt: Anker rechts setzen
+    back = [("RX-Board Si4732  Rev A", 36.0, 9.0), (COPY, 36.0, 11.0), ("github.com/MaShaoDe/RX-Board-Si4732", 36.0, 13.0), ("CERN-OHL-P-2.0", 36.0, 15.0), ("SN:_____", 36.0, 17.0)]
     for i, (t, x, y) in enumerate(back):
         a(' (gr_text "%s" (at %s %s) (layer "B.SilkS") (uuid "%s") (effects (font (size 1 1) (thickness 0.15)) (justify left mirror)))' % (t, f(x), f(y), U("bt%d" % i)))
     # Masse-Zonen
