@@ -821,7 +821,8 @@
   "descr": "SMD pad as test Point, diameter 1.5mm",
   "tags": "test point SMD pad",
   "attr": [
-   "smd"
+   "exclude_from_pos_files",
+   "exclude_from_bom"
   ],
   "pads": [
    {
