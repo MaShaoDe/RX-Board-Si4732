@@ -6,12 +6,12 @@ Stand 2026-11-15. Für jedes Teil die Anforderung, den Suchbegriff im JLCPCB-Tei
 |---|---|---|---|---|---|
 | C1 | 100 nF | 0805 | X7R, mindestens 16 V | `100nF 0805 X7R` | C49678 (Yageo, 50 V, bestätigt) |
 | C4 | 1 µF | 0805 | X7R, mindestens 10 V | `1uF 0805 X7R` | C49326705 (16 V) |
-| C2, C3 | 22 pF | 0805 | C0G/NP0, 5 % oder besser, mindestens 50 V | `22pF 0805 C0G` | |
+| C2, C3 | 22 pF | 0805 | C0G/NP0, 5 % oder besser, mindestens 50 V | `22pF 0805 C0G` | C1804 (50 V) |
 | C7 | 1 nF | 0805 | C0G/NP0, 10 % oder besser (Antennenpfad) | `1nF 0805 C0G` | |
 | C5, C6, C8 | 470 nF | 0805 | X7R, mindestens 16 V | `470nF 0805 X7R` | C106846 (25 V) |
 | R1, R2, R3 | 4.7 kΩ | 0805 | 1 % | `4.7k 0805 1%` | C17673 |
 | R4, R5, R6 | 20 kΩ | 0805 | 1 % | `20k 0805 1%` | C2912590 |
-| R7 | 0 Ω | 0805 | Brücke | `0R 0805` | |
+| R7 | 0 Ω | 0805 | Brücke | `0R 0805` | C17477 |
 | L1 | 56 nH | 0805 | HF-Spule, Güte mindestens 15 bei 100 MHz, kleiner Gleichstromwiderstand | `56nH 0805 inductor RF` | |
 | D1, D2 | BAV99 | SOT-23 | Doppeldiode, Pin 1 Anode, Pin 2 Kathode, Pin 3 gemeinsam | `BAV99 SOT-23` | C68983 |
 | X1 | 32.768 kHz | 3.2 x 1.5 mm | 2 Pads, Lastkapazität 12.5 pF, Toleranz ±20 ppm (AN383 verlangt höchstens ±50 ppm) | `32.768kHz 3215 12.5pF` | C32346 (12.5 pF, ±20 ppm) |
