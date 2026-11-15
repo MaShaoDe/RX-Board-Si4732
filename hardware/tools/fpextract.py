@@ -14,6 +14,8 @@ def one(n, name):
     k = kids(n, name); return k[0] if k else None
 def q(s): return s.strip('"')
 def fl(x): return [float(v) for v in x]
+# Attribute laut Original-.kicad_mod der Bibliothek (Update aus der Bibliothek aendert Attribute nicht)
+ATTR_OVERRIDES = {"TestPoint:TestPoint_Pad_D1.5mm": ["exclude_from_pos_files", "exclude_from_bom"]}
 def main(path, out):
     root = parse(open(path, encoding="utf-8").read())
     lib = {}
@@ -45,6 +47,7 @@ def main(path, out):
                 e["ttype"] = g[1]; e["text"] = q(g[2]); a = one(g, "at"); e["at"] = fl(a[1:3])
                 f = one(one(g, "effects"), "font"); e["size"] = fl(one(f, "size")[1:3]); e["thickness"] = float(one(f, "thickness")[1])
             d["gfx"].append(e)
+        if name in ATTR_OVERRIDES: d["attr"] = ATTR_OVERRIDES[name]
         lib[name] = d
     json.dump(lib, open(out, "w"), indent=1)
     print(len(lib), "Footprints ->", out)
