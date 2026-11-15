@@ -307,6 +307,10 @@ def main():
     bomdir = os.path.join(OUT, "..", "bom"); os.makedirs(bomdir, exist_ok=True)
     with open(os.path.join(bomdir, "RX-Board_RevA_BOM.csv"), "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh); w.writerow(["Comment", "Designator", "Footprint", "LCSC Part #", "Beschreibung", "Bestueckung"]); w.writerows(build_bom())
+    with open(os.path.join(bomdir, "RX-Board_RevA_BOM_JLCPCB.csv"), "w", newline="", encoding="utf-8") as fh:
+        w = csv.writer(fh); w.writerow(["Comment", "Designator", "Footprint", "LCSC Part #"])
+        for row in build_bom():
+            if row[5] == "ja": w.writerow([row[0], row[1], row[2], row[3]])
     print("\n".join(r.log)); print("Pruefung:", errs or "keine Fehler", "| kleinster Abstand %.3f mm" % minc)
     return r
 
