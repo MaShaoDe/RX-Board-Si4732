@@ -1,5 +1,7 @@
 # RX-Board Si4732
 
+<p align="center"><img src="docs/img/titelbild.jpg" alt="RX-Board Si4732: Kinder und ein Grossvater löten Stiftleisten an das Empfängerboard" width="600"></p>
+
 Steckbare Empfänger-Baugruppe für das [Funkfüürli](https://github.com/MaShaoDe/Funkfuerli), das Notfallradio zum Selberbauen für Kinder und Schüler.
 
 Das RX-Board trägt den Empfängerchip Si4732-A10 (UKW, MW, KW, LW, RDS) mit Quarz und Beschaltung. Es wird komplett bestückt bestellt. Die Kinder löten nur die Stiftleisten.
