@@ -1,5 +1,7 @@
 # RX-Board Si4732
 
+<p align="center"><img src="docs/img/titelbild.jpg" alt="RX-Board Si4732: children and a grandfather soldering pin headers onto the receiver board" width="600"></p>
+
 Pluggable receiver module for the [Funkfüürli](https://github.com/MaShaoDe/Funkfuerli), a build-it-yourself emergency radio for children and pupils.
 
 The board carries the Si4732-A10 AM/FM/SW/LW/RDS receiver IC with crystal and support parts. It is ordered fully assembled, so children only solder the pin headers.
