@@ -38,7 +38,7 @@ Die Belegung der Stiftleiste wird nach dem Pinplan der Hauptplatine festgelegt (
 | Antenne AM/LW | Eingang | Ferritstab |
 | Interrupt (optional) | Ausgang | Nur wenn die Firmware ihn braucht |
 
-Welche Antenne an welchen Eingang gehört: FM kommt vom Teleskop an FMI. Der Ferritstab sitzt an AMI für MW und LW. Für Kurzwelle (SW) ist der Eingang (FMI oder AMI) offen: AN383 gilt nur für Si4734/35, nicht für den Si4732. Klärung durch die Rev-A-Tests P4 und P5. Details in Abschnitt 4c.
+Welche Antenne an welchen Eingang gehört : FM kommt vom Teleskop an FMI. Für Kurzwelle (SW) beschreibt AN383 die Beschaltung über AMI, aber nur für Si4734/35. Beim Si4732 ist offen, ob KW über FMI oder AMI läuft (Rev-A-Tests P4 und P5 im Pflichtenheft). Der Ferritstab sitzt an AMI für MW und LW. Details in Abschnitt 4c.
 
 ## 4. Anforderungen
 
@@ -92,7 +92,7 @@ Quellen: Datenblatt-Kurzfassung Silicon Labs (2013) und Skyworks (2021), beide g
 | 5 | NC | nicht belegt | unbeschaltet |
 | 6 | FMI | FM Antenneneingang | Teleskop, ESD-Schutz |
 | 7 | RFGND | HF-Masse | an GND |
-| 8 | AMI | AM und LW Antenneneingang (SW offen, siehe 4c) | Ferritstab, ESD-Schutz |
+| 8 | AMI | AM und LW Antenneneingang (SW offen, siehe oben) | Ferritstab, ESD-Schutz |
 | 9 | RST | Reset, aktiv low | Pull-up 4.7 kΩ, von ESP32 |
 | 10 | SENB | Adresswahl I2C | fest verdrahtet (siehe unten) |
 | 11 | SCLK | I2C Takt | Pull-up 4.7 kΩ |
@@ -115,7 +115,7 @@ Das Layout wird nach Schaltplan und Datenblatt gezeichnet. Die Werte unten sind 
 * Audio: je 470 nF in Reihe pro Kanal, dazu 20 kΩ Widerstände.
 * FM-Pfad (Rev A, laut Stückliste): 1 nF in Reihe, Spule 56 nH, Schutzdioden BAV99. Mikroe nutzt 270 nH.
 * AM-Pfad: 470 nF in Reihe, Ferritstab an Pin 8, Dioden BAV99 als Schutz.
-* Der Kopfhörerverstärker (LM4910) des Mikroe-Clicks entfällt. Das Tonsignal geht auf die Stiftleiste.
+* Der Kopfhörerverstärker (LM4910) des Mikroe-Clicks entfällt. Das Tonsignal geht auf die Stiftleiste. Der Chip liefert nur Line-Pegel (Datenblatt Si473x-B20: 80 mV eff, Last mindestens 10 kΩ). Der Kopfhörerverstärker sitzt im Basisboard (Repo Funkbasis-ESP32). Am Ausgang liegen 470 nF in Reihe und 20 kΩ nach GND pro Kanal.
 * Bus-Modus (AN332, Abschnitt 6): Der Chip wählt den Modus beim Reset über GPO1 und GPO2. Intern ziehen 1 MΩ Widerstände GPO1 hoch und GPO2 tief, das ergibt I2C (2-Wire). Darum bleiben GPO1 und GPO2 auf dem Board unbeschaltet.
 * Start (AN332): Quarzbetrieb braucht beim Befehl POWER_UP XOSCEN = 1 und OPMODE = 0x05 (analoger Ausgang). Danach mindestens 500 ms warten, bis der erste Abstimmbefehl kommt. Zum Chip-Test gibt POWER_UP mit FUNC = 15 die Teilenummer zurück.
 * Die genaue Verschaltung (welcher Wert in welcher Leitung) wird aus dem Schaltplan gezeichnet, nicht aus dieser Liste. Der Ferritstab (180 bis 450 µH) steht in 4c, der Wert wird gemessen.
@@ -134,7 +134,7 @@ Das Layout wird nach Schaltplan und Datenblatt gezeichnet. Die Werte unten sind 
 * Unter dem Ferritstab keine Massefläche und keine Leitung, Abstand etwa 6 mm (1/4 Zoll) oder die Breite des Stabs. Weit weg von Taktleitungen, ESP32 und Display. Aussen am Gerät oder an einem Kabel sitzt der Stab weniger im Störfeld.
 
 **KW (SW), Eingang offen (erst Rev B)**
-* Nach AN383 läuft die Kurzwelle über AMI (AN383 gilt für Si4734/35, für den Si4732 nicht bestätigt, offen bis Test P4 und P5). Dafür braucht es eine Tiefpass-Spule 4.7 µH (Güte mindestens 20 bei 25 MHz), 33 pF als Sperrkreis für AM, und der Ferritstab dient als Spule gegen Masse. Alternativ eine feste Spule 220 µH, wenn kein AM gebraucht wird.
+* Für die Kurzwelle beschreibt AN383 (nur Si4734/35) den Weg über AMI, beim Si4732 ist er ungeprüft. Der Weg über AMI braucht eine Tiefpass-Spule 4.7 µH (Güte mindestens 20 bei 25 MHz), 33 pF als Sperrkreis für AM, und der Ferritstab dient als Spule gegen Masse. Alternativ eine feste Spule 220 µH, wenn kein AM gebraucht wird.
 * Umschalter (SPDT) zwischen KW-Teleskop und AM-Ferritstab, oder zwei getrennte Buchsen. Entscheid 2026-11-15: Die KW-Beschaltung kommt erst in Rev B.
 * Zwei ESD-Dioden (je höchstens 1 pF) an den Antennenbuchsen, weil die Teleskopantenne aussen liegt.
 
