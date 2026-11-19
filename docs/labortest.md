@@ -7,15 +7,15 @@ Ziel: Chip, Quarz, FM und MW/LW der ersten Platinen prüfen und die Startwerte (
 * RX-Board Rev A mit eingelöteter Stiftleiste J1 (1x9)
 * Mikrocontroller mit 3.3 V Logik (Pico, ESP32, Arduino 3.3 V). 5 V Logik nur mit Pegelwandler, der Chip verträgt maximal 3.6 V.
 * Stromversorgung 3.3 V mit Strombegrenzung (50 mA)
-* Multimeter, Oszilloskop (optional), Kopfhörer oder Aktivlautsprecher
+* Multimeter, Oszilloskop (optional), Aktivlautsprecher (der Chip treibt keine Kopfhörer, nur Line-Pegel)
 * FM: Draht 75 cm oder Teleskopantenne an J2. AM: Ferritstab 180 bis 450 µH an J3.
 
 ## 2. Anschluss J1
 
 | Pin | Signal | Anschluss |
 |---|---|---|
-| 1 | AUDIO_L | Verstärker oder Kopfhörer links |
-| 2 | AUDIO_R | Verstärker oder Kopfhörer rechts |
+| 1 | AUDIO_L | Verstärker links (Line-Pegel, Last mindestens 10 kΩ) |
+| 2 | AUDIO_R | Verstärker rechts (Line-Pegel, Last mindestens 10 kΩ) |
 | 3 | GND | GND |
 | 4 | 3V3 | 3.3 V |
 | 5 | SDA | I2C Daten |
@@ -49,7 +49,7 @@ Messpunkte: TP1 3V3, TP2 GND, TP3 SDA, TP4 SCL, TP5 AUDIO_L, TP6 AUDIO_R, TP7 RS
 **Stufe 4, Quarzstart und FM**
 * POWER_UP FM-Empfang: XOSCEN = 1, FUNC = 0, OPMODE = 0x05 (analoger Ausgang). Danach mindestens 500 ms warten.
 * Lautstärke setzen (Property RX_VOLUME), FM_TUNE_FREQ auf einen starken Sender (Einheit 10 kHz, 101.30 MHz = 10130). FM_TUNE_STATUS lesen: RSSI und SNR notieren.
-* Ton an TP5 und TP6 messen oder am Kopfhörer hören.
+* Ton an TP5 und TP6 messen oder über einen Aktivlautsprecher hören. Kein Kopfhörer direkt anschliessen.
 * Läuft der Quarz nicht (keine Antwort nach POWER_UP), RCLK mit hochohmigem Tastkopf prüfen. Ein 10 MΩ Tastkopf belastet den Quarz weniger als ein 1 MΩ Tastkopf.
 
 **Stufe 5, MW und LW**
