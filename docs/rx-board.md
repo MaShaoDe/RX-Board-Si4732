@@ -38,7 +38,7 @@ Die Belegung der Stiftleiste wird nach dem Pinplan der Hauptplatine festgelegt (
 | Antenne AM/LW | Eingang | Ferritstab |
 | Interrupt (optional) | Ausgang | Nur wenn die Firmware ihn braucht |
 
-Welche Antenne an welchen Eingang gehört : FM kommt vom Teleskop an FMI. Für Kurzwelle (SW) beschreibt AN383 die Beschaltung über AMI, aber nur für Si4734/35. Beim Si4732 ist offen, ob KW über FMI oder AMI läuft (Rev-A-Tests P4 und P5 im Pflichtenheft). Der Ferritstab sitzt an AMI für MW und LW. Details in Abschnitt 4c.
+Welche Antenne an welchen Eingang gehört: FM kommt vom Teleskop an FMI. Für Kurzwelle (SW) beschreibt AN383 die Beschaltung über AMI, aber nur für Si4734/35. Beim Si4732 ist offen, ob KW über FMI oder AMI läuft (Rev-A-Tests P4 und P5 im Pflichtenheft). Der Ferritstab sitzt an AMI für MW und LW. Details in Abschnitt 4c.
 
 ## 4. Anforderungen
 
