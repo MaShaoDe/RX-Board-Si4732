@@ -1,6 +1,6 @@
 # hardware
 
-Rev A des RX-Boards (UKW, MW, LW). Stand 2026-11-15: **Entwurf.** ERC in KiCad 10: 0 Meldungen. DRC Durchgang 2: 0 Fehler. Die Footprints stammen jetzt aus der echten KiCad-Bibliothek (`tools/fplib.json`). Noch offen: DRC der neuen Version, Antennenpfade im Labortest, JLCPCB-Vorschau.
+Rev A des RX-Boards (UKW, MW, LW). Stand 2026-11-19: **gefertigt, Lieferung und Tests stehen aus.** Entwurfsstand vom 2026-11-15: ERC in KiCad 10: 0 Meldungen. DRC Durchgang 2: 0 Fehler. Die Footprints stammen jetzt aus der echten KiCad-Bibliothek (`tools/fplib.json`). Noch offen: DRC der neuen Version, Antennenpfade im Labortest, JLCPCB-Vorschau.
 
 ## Inhalt
 
@@ -9,7 +9,8 @@ Rev A des RX-Boards (UKW, MW, LW). Stand 2026-11-15: **Entwurf.** ERC in KiCad 1
 | `kicad/RX-Board-Si4732.kicad_pro` | KiCad-Projekt (erzeugt im KiCad-8-Format, in KiCad 10 geladen und gespeichert) |
 | `kicad/RX-Board-Si4732.kicad_sch` | Schaltplan. Verbindungen laufen über gleichnamige Netzbezeichner, nicht über gezeichnete Leitungen |
 | `kicad/RX-Board-Si4732.kicad_pcb` | Platine 44 x 30 mm, 2 Lagen, bestückt und verlegt, Masseflächen vorne und hinten |
-| `bom/RX-Board_RevA_BOM.csv` | Stückliste. Die Spalte "LCSC Part #" ist bis auf den Chip noch leer |
+| `bom/RX-Board_RevA_BOM.csv` | Stückliste des Entwurfs. Die Stückliste mit LCSC-Nummern liegt in `production/` |
+| `production/` | Fertigungsdaten Rev A (Stückliste mit LCSC-Nummern, Bestückungsdatei), siehe `production/README.md` |
 | `preview/layout-vorschau.png` | Grobe Vorschau des Layouts (kein KiCad-Bild) |
 | `tools/` | Python-Skripte, die diese Dateien erzeugen (siehe unten). `fplib.json` enthält die Footprints aus der KiCad-Bibliothek |
 
@@ -36,7 +37,6 @@ Benötigt Python 3 und numpy. `rxmodel.py` enthält Bauteile, Netze und Platzier
 
 ## Offen
 
-* LCSC-Nummern der Bauteile ergänzen und die Verfügbarkeit beim Hersteller prüfen.
-* Quarz: Bauform 3215, Lastkapazität 12.5 pF, Toleranz laut AN383 ±50 ppm. Passenden Typ in der JLCPCB-Bibliothek wählen.
+* Quarz: Bauform 3215, Lastkapazität 12.5 pF, Toleranz laut AN383 ±50 ppm. Der bestellte Typ (LCSC C32346) ist gegen diese Werte zu prüfen.
 * FM-Spule 56 nH ist ein Startwert aus AN383 und wird im Labortest geprüft (Mikroe nutzt 270 nH).
 * Footprint der Stiftleiste, Kodierung und mechanische Lage zur Hauptplatine festlegen.

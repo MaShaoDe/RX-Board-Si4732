@@ -111,6 +111,6 @@ Vorschlag Entscheidungsregel: Die Variante, mit der an einem Abend in mindestens
 | Q6 | Lieferbarkeit beim Hersteller: L1 4.7 µH, Umschalter, ESD-Dioden | vor Bestellung |
 | Q7 | Boardgrösse und Lage der Antennenanschlüsse (Rev B) | nach Q1 |
 | Q8 | Vollständiges Si4732-A10-Datenblatt fehlt (nur Kurzfassung) | offen |
-| Q9 | STATUS.md und rx-board.md des RX-Boards nachführen: Rev A in Fertigung, Aussage "KW über AMI, nicht über FMI" als offen markieren | Dokumentpflege |
+| Q9 | STATUS.md und rx-board.md des RX-Boards nachführen: Rev A in Fertigung, Aussage "KW über AMI, nicht über FMI" als offen markieren | in PR 10, nach Merge erledigt |
 
 *Copyright FerienBSD aka Marcel Sauder. Doku unter CC-BY-4.0.*
