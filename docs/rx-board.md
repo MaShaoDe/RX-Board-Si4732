@@ -1,4 +1,4 @@
-# RX-Board: Empfänger-Baugruppe (Stand 2026-11-15, Entwurf)
+# RX-Board: Empfänger-Baugruppe (Stand 2026-11-19, Rev A gefertigt, Tests offen)
 
 Dieses Dokument ist die Quelle. Die Kopie im Hauptprojekt verweist hierher.
 

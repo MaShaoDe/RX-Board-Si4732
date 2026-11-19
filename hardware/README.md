@@ -1,6 +1,6 @@
 # hardware
 
-Rev A des RX-Boards (UKW, MW, LW). Stand 2026-11-15: **Entwurf.** ERC in KiCad 10: 0 Meldungen. DRC Durchgang 2: 0 Fehler. Die Footprints stammen jetzt aus der echten KiCad-Bibliothek (`tools/fplib.json`). Noch offen: DRC der neuen Version, Antennenpfade im Labortest, JLCPCB-Vorschau.
+Rev A des RX-Boards (UKW, MW, LW). Stand 2026-11-19: **gefertigt, Lieferung und Tests stehen aus.** Entwurfsstand vom 2026-11-15: ERC in KiCad 10: 0 Meldungen. DRC Durchgang 2: 0 Fehler. Die Footprints stammen jetzt aus der echten KiCad-Bibliothek (`tools/fplib.json`). Noch offen: DRC der neuen Version, Antennenpfade im Labortest, JLCPCB-Vorschau.
 
 ## Inhalt
 
