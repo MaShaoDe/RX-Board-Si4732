@@ -38,7 +38,7 @@ Die Belegung der Stiftleiste wird nach dem Pinplan der Hauptplatine festgelegt (
 | Antenne AM/LW | Eingang | Ferritstab |
 | Interrupt (optional) | Ausgang | Nur wenn die Firmware ihn braucht |
 
-Welche Antenne an welchen Eingang gehört (AN383, geprüft): FM kommt vom Teleskop an FMI. Kurzwelle (SW) kommt bei diesem Chip über AMI, nicht über FMI. Der Ferritstab sitzt an AMI für MW und LW. Details in Abschnitt 4c.
+Welche Antenne an welchen Eingang gehört: FM kommt vom Teleskop an FMI. Der Ferritstab sitzt an AMI für MW und LW. Für Kurzwelle (SW) ist der Eingang (FMI oder AMI) offen: AN383 gilt nur für Si4734/35, nicht für den Si4732. Klärung durch die Rev-A-Tests P4 und P5. Details in Abschnitt 4c.
 
 ## 4. Anforderungen
 
@@ -92,7 +92,7 @@ Quellen: Datenblatt-Kurzfassung Silicon Labs (2013) und Skyworks (2021), beide g
 | 5 | NC | nicht belegt | unbeschaltet |
 | 6 | FMI | FM Antenneneingang | Teleskop, ESD-Schutz |
 | 7 | RFGND | HF-Masse | an GND |
-| 8 | AMI | AM, LW und SW Antenneneingang | Ferritstab (und Teleskop für KW), ESD-Schutz |
+| 8 | AMI | AM und LW Antenneneingang (SW offen, siehe 4c) | Ferritstab, ESD-Schutz |
 | 9 | RST | Reset, aktiv low | Pull-up 4.7 kΩ, von ESP32 |
 | 10 | SENB | Adresswahl I2C | fest verdrahtet (siehe unten) |
 | 11 | SCLK | I2C Takt | Pull-up 4.7 kΩ |
@@ -113,12 +113,12 @@ Das Layout wird nach Schaltplan und Datenblatt gezeichnet. Die Werte unten sind 
 * Versorgung: 100 nF und 1 µF direkt an Pin 14.
 * Adresse (AN332, Abschnitt 6.1): SENB = GND ergibt 7-Bit-Adresse 0x11 (Schreiben 0x22), SENB = 3.3 V ergibt 0x63 (Schreiben 0xC6). Wir legen SENB fest auf GND (Adresse 0x11). Beim Mikroe-Click ist es per Jumper wählbar.
 * Audio: je 470 nF in Reihe pro Kanal, dazu 20 kΩ Widerstände.
-* FM-Pfad: 1 nF, 100 pF, 270 nH, 100 nF und Schutzdioden BAV99.
+* FM-Pfad (Rev A, laut Stückliste): 1 nF in Reihe, Spule 56 nH, Schutzdioden BAV99. Mikroe nutzt 270 nH.
 * AM-Pfad: 470 nF in Reihe, Ferritstab an Pin 8, Dioden BAV99 als Schutz.
 * Der Kopfhörerverstärker (LM4910) des Mikroe-Clicks entfällt. Das Tonsignal geht auf die Stiftleiste.
 * Bus-Modus (AN332, Abschnitt 6): Der Chip wählt den Modus beim Reset über GPO1 und GPO2. Intern ziehen 1 MΩ Widerstände GPO1 hoch und GPO2 tief, das ergibt I2C (2-Wire). Darum bleiben GPO1 und GPO2 auf dem Board unbeschaltet.
 * Start (AN332): Quarzbetrieb braucht beim Befehl POWER_UP XOSCEN = 1 und OPMODE = 0x05 (analoger Ausgang). Danach mindestens 500 ms warten, bis der erste Abstimmbefehl kommt. Zum Chip-Test gibt POWER_UP mit FUNC = 15 die Teilenummer zurück.
-* Die genaue Verschaltung (welcher Wert in welcher Leitung) wird aus dem Schaltplan gezeichnet, nicht aus dieser Liste. Die Ferritantenne (Induktivität) ist noch festzulegen.
+* Die genaue Verschaltung (welcher Wert in welcher Leitung) wird aus dem Schaltplan gezeichnet, nicht aus dieser Liste. Der Ferritstab (180 bis 450 µH) steht in 4c, der Wert wird gemessen.
 
 ## 4c. Antennen (Quelle: AN383, Skyworks 2025)
 
@@ -133,8 +133,8 @@ Das Layout wird nach Schaltplan und Datenblatt gezeichnet. Die Werte unten sind 
 * Gesamtkapazität am AMI klein halten: etwa 29 pF bei 300 µH (der Chip selbst hat 8 pF). Kurze Leitungen, kleine Pads.
 * Unter dem Ferritstab keine Massefläche und keine Leitung, Abstand etwa 6 mm (1/4 Zoll) oder die Breite des Stabs. Weit weg von Taktleitungen, ESP32 und Display. Aussen am Gerät oder an einem Kabel sitzt der Stab weniger im Störfeld.
 
-**KW (SW), Teleskop an AMI (erst Rev B)**
-* Die Kurzwelle läuft beim Si4732 über AMI. Dafür braucht es eine Tiefpass-Spule 4.7 µH (Güte mindestens 20 bei 25 MHz), 33 pF als Sperrkreis für AM, und der Ferritstab dient als Spule gegen Masse. Alternativ eine feste Spule 220 µH, wenn kein AM gebraucht wird.
+**KW (SW), Eingang offen (erst Rev B)**
+* Nach AN383 läuft die Kurzwelle über AMI (AN383 gilt für Si4734/35, für den Si4732 nicht bestätigt, offen bis Test P4 und P5). Dafür braucht es eine Tiefpass-Spule 4.7 µH (Güte mindestens 20 bei 25 MHz), 33 pF als Sperrkreis für AM, und der Ferritstab dient als Spule gegen Masse. Alternativ eine feste Spule 220 µH, wenn kein AM gebraucht wird.
 * Umschalter (SPDT) zwischen KW-Teleskop und AM-Ferritstab, oder zwei getrennte Buchsen. Entscheid 2026-11-15: Die KW-Beschaltung kommt erst in Rev B.
 * Zwei ESD-Dioden (je höchstens 1 pF) an den Antennenbuchsen, weil die Teleskopantenne aussen liegt.
 
@@ -149,7 +149,7 @@ Das Layout wird nach Schaltplan und Datenblatt gezeichnet. Die Werte unten sind 
 | Rev | Inhalt |
 |---|---|
 | A | UKW (FMI), MW und LW (AMI mit Ferritstab). Kein KW-Zweig. Zum Testen von Chip, Quarz, I2C, Audio, Antennen. KiCad-Entwurf liegt in `hardware/kicad/` (siehe `hardware/README.md`). |
-| B | Korrekturen aus Rev A. Dazu KW über AMI (Tiefpass-Spule 4.7 µH, 33 pF, Umschalter). Version für den Kurs. |
+| B | Korrekturen aus Rev A. Dazu KW, Eingang nach Tests P4 und P5 (Variante AMI: Tiefpass-Spule 4.7 µH, 33 pF, Umschalter). Version für den Kurs. |
 
 ## 4e. Stiftleiste J1 zur Hauptplatine (Rev A)
 
@@ -181,7 +181,7 @@ Antennen: J2 (FM, Pin 1 Antenne, Pin 2 GND) und J3 (AM/LW, Pin 1 und Pin 2 für 
 
 ## 6. Test
 
-* Vergleich: Empfang UKW, MW, KW mit Teleskop und Drahtantenne.
+* Vergleich: Empfang UKW, MW und LW. KW nur als Versuch (Tests P4 und P5, Rev A hat keinen KW-Zweig).
 * Stromaufnahme im Betrieb messen.
 * Störtest nach Konzept Abschnitt 8.
 * Zuerst auf dem Breadboard mit Kabeln (Stufe 1 in [prototyp.md](https://github.com/MaShaoDe/Funkfuerli/blob/main/docs/prototyp.md)).
@@ -190,7 +190,7 @@ Antennen: J2 (FM, Pin 1 Antenne, Pin 2 GND) und J3 (AM/LW, Pin 1 und Pin 2 für 
 
 1. Vollständiges Datenblatt des Si4732-A10: Es gibt öffentlich nur das 3-seitige Data Short. AN332 (Programming Guide) liegt vor und liefert Adresse, Bus-Modus und Start. Es fehlen weiter Applikationsschaltung mit Werten, Maximalwerte und Layout-Hinweise. Pinbelegung ist geprüft (Abschnitt 4a), die Werte in 4b sind Startwerte aus dem Mikroe-Schaltplan.
 2. Erledigt: Mikroe-Schaltplan gegengelesen (Abschnitt 4a und 4b).
-3. Erledigt: Ferritstab (180 bis 450 µH, 0.47 µF) nach AN383, siehe 4c. Entscheid 2026-11-15: Rev A ohne Kurzwelle (UKW, MW, LW), KW in Rev B. Offen für Rev B: Umschalter oder zwei Buchsen, Teleskop für FM und KW gemeinsam oder getrennt.
+3. Erledigt: Ferritstab (180 bis 450 µH, 0.47 µF) nach AN383, siehe 4c. Entscheid 2026-11-15: Rev A ohne Kurzwelle (UKW, MW, LW), KW in Rev B. Offen für Rev B: KW-Eingang FMI oder AMI (Tests P4, P5), Umschalter oder zwei Buchsen, Teleskop für FM und KW gemeinsam oder getrennt.
 4. Schutz der Antenneneingänge gegen statische Aufladung (SMD, auf dem Board).
 5. Verfügbarkeit von Chip, Quarz und Kondensatoren beim Hersteller, Angebot einholen.
 6. Lizenzdatei der PU2CLR-Bibliothek einsehen, Autor in der Doku nennen.
