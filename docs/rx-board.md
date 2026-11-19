@@ -18,7 +18,7 @@ Antenne  ->  RX-Board  ->  Ton (L, R)  ->  Verstärker / Klinke
 
 ## 2. Entscheid
 
-* Eigenes Board statt fertigem Mikroe AM/FM 2 Click (2026-11-15). Der Click kostet mit Versand und Zoll etwa 30 bis 40 CHF und passt nicht zu unserem Pinplan.
+* Eigenes Board statt fertigem Mikroe AM/FM 2 Click (2026-11-15). Der Click passt nicht zu unserem Pinplan und hat keinen KW-Zweig.
 * Kinder löten kein SMD. Das RX-Board wird komplett bestückt bestellt (PCBA bei JLCPCB), die Kinder löten nur Stiftleisten.
 * Der Chip, der Quarz und die Kondensatoren müssen deshalb in der Fertigungsbibliothek des Herstellers lieferbar sein. Das wird beim Entwurf je Bauteil geprüft.
 * Vorlage für die Beschaltung: offene Schaltpläne der PU2CLR-Bibliothek (MIT) und das Datenblatt des Si4732-A10. Nichts von Sunnygold (CC BY-NC-SA) und nichts von den Umbaumodulen für UV-K5/K6.
