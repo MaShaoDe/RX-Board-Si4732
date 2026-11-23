@@ -169,7 +169,32 @@ Das Layout wird nach Schaltplan und Datenblatt gezeichnet. Die Werte unten sind 
 
 Der Pinplan der Hauptplatine muss dieser Reihenfolge folgen (Buchsenleiste 1x9).
 
-Antennen: J2 (FM, Pin 1 Antenne, Pin 2 GND) und J3 (AM/LW, Pin 1 und Pin 2 für den Ferritstab). Befestigung: 2 Löcher mit 2.7 mm für M2.5. Platine 44 x 30 mm.
+## 4f. Antennenanschlüsse J2 und J3 (Rev A)
+
+Beide Stiftleisten 1x2, Raster 2.54 mm, Pin 1 quadratisch.
+
+| Anschluss | Pin | Signal | Bemerkung |
+|---|---|---|---|
+| J2 (FM_ANT) | 1 | FM_ANT | Antenne für UKW, über das FM-Anpassnetz (1 nF, 56 nH) zum Chip-Eingang FMI (Pin 6). Für den KW-Versuch P4 |
+| J2 (FM_ANT) | 2 | GND | Masse |
+| J3 (AM_ANT) | 1 | AM_ANT | Ferritstab für MW und LW, über 470 nF zum Chip-Eingang AMI (Pin 8), BAV99 als Schutz. Für den KW-Versuch P5 |
+| J3 (AM_ANT) | 2 | RFGND | Antennenmasse, Chip-Pin 7. Nur über R7 (0 Ω) mit GND verbunden (Schaltplan) |
+
+## 4g. Testpunkte (Rev A)
+
+SMD-Pads mit 1.5 mm Durchmesser, beschriftet.
+
+| Nr. | Signal | Bemerkung |
+|---|---|---|
+| TP1 | 3V3 | Versorgung |
+| TP2 | GND | Masse, Bezug für Messungen |
+| TP3 | SDA | I2C Daten, im Ruhezustand etwa 3.3 V |
+| TP4 | SCL | I2C Takt, im Ruhezustand etwa 3.3 V |
+| TP5 | AUDIO_L (Aufdruck L) | Ton links, wie J1 Pin 1 |
+| TP6 | AUDIO_R (Aufdruck R) | Ton rechts, wie J1 Pin 2 |
+| TP7 | RST | Reset, im Ruhezustand etwa 3.3 V |
+
+Befestigung: 2 Löcher mit 2.7 mm für M2.5 (MH1, MH2). Platine 44 x 30 mm. Quelle der Netznamen und Pins: `hardware/kicad/RX-Board-Si4732.kicad_pcb` und `.kicad_sch`.
 
 ## 5. Bestückung
 

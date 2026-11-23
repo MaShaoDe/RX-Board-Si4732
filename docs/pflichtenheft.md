@@ -6,7 +6,7 @@ Ablage im Repo `RX-Board-Si4732`: `docs/pflichtenheft.md`. Gemeinsame Anforderun
 
 * Das RX-Board ist die steckbare Empfänger-Baugruppe des **Funkfüürli**: Antennensignal rein, Ton links und rechts raus, Steuerung per I2C (Projektdefinition T1).
 * Es ist **kein SDR** und kein Modul für den Wellenjäger. Der Si4732 liefert keine I/Q-Daten. Der Wellenjäger bekommt ein eigenes Funkmodul.
-* Der Stecker J1 ist aber so ausgelegt, dass ein späteres Wellenjäger-Modul auf dieselbe Hauptplatine passt (Projektdefinition T8, O22). Dafür sind Reservepins vorhanden, auf dem RX-Board bleiben sie unbeschaltet.
+* Der Stecker J1 ist aber so ausgelegt, dass ein späteres Wellenjäger-Modul auf dieselbe Hauptplatine passt (Projektdefinition T8). Dafür sind Reservepins vorhanden, auf dem RX-Board bleiben sie unbeschaltet.
 * Rev A (bestellt, in Fertigung) ist ein Testboard: UKW, MW, LW. Rev B ist die Version für den Kurs.
 
 ## 2. Anforderungen
